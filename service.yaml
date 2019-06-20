@@ -1,0 +1,17 @@
+apiVersion: serving.knative.dev/v1alpha1
+kind: Service
+metadata:
+  name: gomaxprocs
+  namespace: demo
+spec:
+  runLatest:
+    configuration:
+      revisionTemplate:
+        spec:
+          container:
+            image: gcr.io/cloudylabs-public/gomaxprocs:0.1.2
+            resources:
+              requests:
+                cpu: "1"
+              limits:
+                cpu: "1"

@@ -25,6 +25,10 @@ deploy:
 		--cluster cr \
 		--cluster-location us-east1
 
+.PHONY: apply
+apply:
+	kubectl apply -f service.yaml
+
 .PHONY: undeploy
 undeploy:
 	gcloud beta run services delete kadvice

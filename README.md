@@ -48,6 +48,28 @@ Core 3 done in 13.051117131s
 Total duration: 13.051166992s
 ```
 
+## Cloud Run on GKE (w/ 1 vCPU resource limit)
+
+```shell
+kubectl apply -f service.yaml
+```
+
+https://gomaxprocs.demo.knative.tech/run
+
+```shell
+CPU cores: 4
+Core 0 start
+Core 1 start
+Core 2 start
+Core 3 start
+Core 0 done in 34.793659559s
+Core 1 done in 36.10635037s
+Core 2 done in 36.327062228s
+Core 3 done in 36.439878516s
+Total duration: 36.439928693s
+```
+
+
 ## Cloud Run
 
 ```shell
