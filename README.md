@@ -4,6 +4,10 @@ golang concurrency and parallelism test
 
 ## MacBook Pro (Intel Core i7, 3.5 GHz)
 
+```shell
+go run main.go
+```
+
 http://localhost:8080/run
 
 ```shell
@@ -19,8 +23,38 @@ Core 0 done in 12.72762304s
 Total duration: 12.727656509s
 ```
 
+## Cloud Run on GKE
+
+```shell
+gcloud beta run deploy gomaxprocs \
+    --image gcr.io/cloudylabs-public/gomaxprocs:$(RELEASE) \
+    --platform gke \
+    --cluster cr \
+    --cluster-location us-east1
+```
+
+http://gomaxprocs.default.knative.tech/run
+
+```shell
+CPU cores: 4
+Core 0 start
+Core 1 start
+Core 2 start
+Core 3 start
+Core 0 done in 12.002515815s
+Core 2 done in 12.157338676s
+Core 1 done in 12.960494389s
+Core 3 done in 13.051117131s
+Total duration: 13.051166992s
+```
 
 ## Cloud Run
+
+```shell
+gcloud beta run deploy gomaxprocs \
+	--image=gcr.io/cloudylabs-public/gomaxprocs:$(RELEASE) \
+	--region=us-central1
+```
 
 https://gomaxprocs-2gtouos2pq-uc.a.run.app/run
 
