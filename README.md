@@ -27,7 +27,7 @@ Total duration: 12.727656509s
 
 ```shell
 gcloud beta run deploy gomaxprocs \
-    --image gcr.io/cloudylabs-public/gomaxprocs:$(RELEASE) \
+    --image gcr.io/cloudylabs-public/gomaxprocs:0.1.2 \
     --platform gke \
     --cluster cr \
     --cluster-location us-east1
@@ -52,7 +52,7 @@ Total duration: 13.051166992s
 
 ```shell
 gcloud beta run deploy gomaxprocs \
-	--image=gcr.io/cloudylabs-public/gomaxprocs:$(RELEASE) \
+	--image=gcr.io/cloudylabs-public/gomaxprocs:0.1.2 \
 	--region=us-central1
 ```
 
