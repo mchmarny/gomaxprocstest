@@ -1,6 +1,6 @@
 # gomaxprocstest
 
-golang concurrency and parallelism test
+simple golang concurrency and parallelism test
 
 ## MacBook Pro (Intel Core i7, 3.5 GHz)
 
