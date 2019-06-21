@@ -1,4 +1,4 @@
-# gomaxprocstest
+# gorun
 
 Simple golang concurrency test app. It spins up CPU-intensive calculation for defined number of `goroutines`. This app is helpful in assessing runtime performance in virtualized environments where often the number of host vCPUs are exposed to app runtime as `runtime.NumCPU()` but the actual number of CPUs available to the application is actually capped at lower number (often 1 vCPU) which may lead to perception of low performance.
 
@@ -53,8 +53,8 @@ go run main.go
 ### Cloud Run on GKE
 
 ```shell
-gcloud beta run deploy gomaxprocs \
-    --image gcr.io/cloudylabs-public/gomaxprocs:0.1.3 \
+gcloud beta run deploy gorun \
+    --image gcr.io/cloudylabs-public/gorun:0.1.4 \
     --platform gke \
     --cluster cr \
     --cluster-location us-east1
@@ -71,8 +71,8 @@ kubectl apply -f service.yaml
 ## Cloud Run (managed)
 
 ```shell
-gcloud beta run deploy gomaxprocs \
-	--image=gcr.io/cloudylabs-public/gomaxprocs:0.1.3 \
+gcloud beta run deploy gorun \
+	--image=gcr.io/cloudylabs-public/gorun:0.1.4 \
 	--region=us-central1
 ```
 

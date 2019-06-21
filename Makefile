@@ -1,4 +1,4 @@
-RELEASE=0.1.3
+RELEASE=0.1.4
 
 .PHONY: mod
 mod:
@@ -13,19 +13,19 @@ run:
 image: mod
 	gcloud builds submit \
 		--project cloudylabs-public \
-		--tag gcr.io/cloudylabs-public/gomaxprocs:$(RELEASE)
+		--tag gcr.io/cloudylabs-public/gorun:$(RELEASE)
 
 .PHONY: service
 service:
-	gcloud beta run deploy gomaxprocs \
-		--image=gcr.io/cloudylabs-public/gomaxprocs:$(RELEASE) \
+	gcloud beta run deploy gorun \
+		--image=gcr.io/cloudylabs-public/gorun:$(RELEASE) \
 		--region=us-central1 \
 		--platform=managed
 
 .PHONY: deploy
 deploy:
-	gcloud beta run deploy gomaxprocs \
-		--image gcr.io/cloudylabs-public/gomaxprocs:$(RELEASE) \
+	gcloud beta run deploy gorun \
+		--image gcr.io/cloudylabs-public/gorun:$(RELEASE) \
 		--platform gke \
 		--cluster cr \
 		--cluster-location us-east1
@@ -37,7 +37,3 @@ apply:
 .PHONY: deployall
 deployall: service deploy apply
 
-
-.PHONY: undeploy
-undeploy:
-	gcloud beta run services delete kadvice
