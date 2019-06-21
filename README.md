@@ -42,7 +42,7 @@ http://localhost:8080/cores
 
 ```shell
 gcloud beta run deploy gomaxprocs \
-    --image gcr.io/cloudylabs-public/gomaxprocs:0.1.2 \
+    --image gcr.io/cloudylabs-public/gomaxprocs:0.1.3 \
     --platform gke \
     --cluster cr \
     --cluster-location us-east1
@@ -60,7 +60,7 @@ kubectl apply -f service.yaml
 
 ```shell
 gcloud beta run deploy gomaxprocs \
-	--image=gcr.io/cloudylabs-public/gomaxprocs:0.1.2 \
+	--image=gcr.io/cloudylabs-public/gomaxprocs:0.1.3 \
 	--region=us-central1
 ```
 
