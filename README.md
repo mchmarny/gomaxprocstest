@@ -1,6 +1,6 @@
 # gomaxprocstest
 
-Simple golang concurrency test app. It spins up CPU-intensive calculation for defined number of `goroutines`. This app is helpful in assessing runtime performance in virtualized envirnments where often the number of host vCPUs are exposed to app runtime as `runtime.NumCPU()` but the actual number of CPUs available to the application is actually capped at lower number (pften 1 vCPU) which may lead to perception of low performance.
+Simple golang concurrency test app. It spins up CPU-intensive calculation for defined number of `goroutines`. This app is helpful in assessing runtime performance in virtualized environments where often the number of host vCPUs are exposed to app runtime as `runtime.NumCPU()` but the actual number of CPUs available to the application is actually capped at lower number (often 1 vCPU) which may lead to perception of low performance.
 
 REST endpoints:
 
@@ -14,7 +14,7 @@ As an example, this request:
 
 `/cores/4/concurrency/4/calcs/1000000000`
 
-Will result in response looking something like this:
+Will run `1000000000` mathematical calculations in `4` separate `goroutines` with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this:
 
 ```json
 {
@@ -49,8 +49,6 @@ Will result in response looking something like this:
 ```shell
 go run main.go
 ```
-
-http://localhost:8080/cores
 
 ### Cloud Run on GKE
 
