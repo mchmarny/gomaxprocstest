@@ -51,8 +51,8 @@ func main() {
 }
 
 func homeHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"numCPU": numOfCores,
+	c.IndentedJSON(http.StatusOK, map[string]interface{}{
+		"cpu_num": numOfCores,
 	})
 }
 
@@ -65,7 +65,7 @@ func coreHandler(c *gin.Context) {
 	cc, err := strconv.Atoi(k)
 	if err != nil {
 		logger.Printf("Error while parsing core parameter: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"message": "Invalid Argument",
 			"status":  "BadRequest",
 		})
@@ -73,30 +73,32 @@ func coreHandler(c *gin.Context) {
 	}
 
 	r := runCores(cc)
-	c.JSON(http.StatusOK, r)
+	c.IndentedJSON(http.StatusOK, r)
 	return
 }
 
-const numOfLoops = 10
+// e := json.NewEncoder(w)
+// e.SetEscapeHTML(true)
+// e.SetIndent("", "\t")
+// e.Encode(o)
 
 func runCores(n int) *runResponse {
 
 	runtime.GOMAXPROCS(n)
 	logger.Printf("Setting max CPU: %d/%d", n, numOfCores)
+	start := time.Now()
 
 	r := &runResponse{
-		StartTime:   time.Now(),
 		Messages:    []runMsg{},
 		TottalCores: numOfCores,
-		UsedCores:   n,
+		MaxCores:    n,
 	}
 
 	done := make(chan int)
 	x := int64(0)
 
-	for i := 0; i < numOfLoops; i++ {
+	for i := 1; i <= n; i++ {
 		logger.Printf("Core %d start", i)
-		r.add(i, fmt.Sprintf("Core %d start", i))
 		go func(worker int) {
 			doWork(&x)
 			done <- worker
@@ -108,9 +110,9 @@ W:
 	for {
 		select {
 		case k := <-done:
-			e := time.Since(r.StartTime)
+			e := time.Since(start)
 			logger.Printf("Core %d done in %s", k, e)
-			r.add(k, fmt.Sprintf("Core %d done in %s", k, e))
+			r.add(k, fmt.Sprintf("Done: %s", e))
 			doneWorkerCount++
 			if doneWorkerCount == n {
 				break W
@@ -118,8 +120,7 @@ W:
 		}
 	}
 
-	r.EndTime = time.Now()
-	r.TotalDuration = time.Since(r.StartTime).String()
+	r.TotalDuration = time.Since(start).String()
 	logger.Printf("Total duration: %s", r.TotalDuration)
 
 	return r
@@ -135,14 +136,10 @@ func doWork(p *int64) {
 }
 
 type runResponse struct {
-	TottalCores   int       `json:"tottalCores"`
-	UsedCores     int       `json:"usedCores"`
-	RunCores      int       `json:"runCores"`
-	NumOfLoops    int       `json:"numOfLoops"`
-	Messages      []runMsg  `json:"messages"`
-	StartTime     time.Time `json:"startTime"`
-	EndTime       time.Time `json:"endTime"`
-	TotalDuration string    `json:"totalDuration"`
+	TottalCores   int      `json:"total_cores"`
+	MaxCores      int      `json:"max_cores"`
+	TotalDuration string   `json:"duration"`
+	Messages      []runMsg `json:"messages"`
 }
 
 func (r *runResponse) add(c int, m string) {
@@ -153,6 +150,6 @@ func (r *runResponse) add(c int, m string) {
 }
 
 type runMsg struct {
-	CoreIndex int    `json:"coreIndex"`
+	CoreIndex int    `json:"core"`
 	Message   string `json:"message"`
 }

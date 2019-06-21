@@ -1,6 +1,12 @@
 # gomaxprocstest
 
-simple golang concurrency and parallelism test
+Simple golang concurrency and parallelism test app. It spins CPU-intensive calculation in a goroutine, per each CPU.
+
+REST endpoints:
+
+`/` - shows total number of CPUs "visible" to go runtime
+`/cores` - runs with max `GOMAXPROCS` set to total number of CPUs
+`/cores/4` - runs with max `GOMAXPROCS` set to passed value (e.g. `4`)
 
 ## MacBook Pro (Intel Core i7, 3.5 GHz)
 
@@ -8,7 +14,7 @@ simple golang concurrency and parallelism test
 go run main.go
 ```
 
-http://localhost:8080/run
+http://localhost:8080/cores
 
 ```shell
 CPU cores: 4
@@ -33,7 +39,7 @@ gcloud beta run deploy gomaxprocs \
     --cluster-location us-east1
 ```
 
-http://gomaxprocs.default.knative.tech/run
+http://gomaxprocs.default.knative.tech/run/cores
 
 ```shell
 CPU cores: 4
@@ -54,7 +60,7 @@ Total duration: 13.051166992s
 kubectl apply -f service.yaml
 ```
 
-https://gomaxprocs.demo.knative.tech/run
+https://gomaxprocs.demo.knative.tech/run/cores
 
 ```shell
 CPU cores: 4
@@ -78,7 +84,7 @@ gcloud beta run deploy gomaxprocs \
 	--region=us-central1
 ```
 
-https://gomaxprocs-2gtouos2pq-uc.a.run.app/run
+https://gomaxprocs-2gtouos2pq-uc.a.run.app/run/cores
 
 ```shell
 CPU cores: 8
