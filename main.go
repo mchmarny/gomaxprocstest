@@ -6,7 +6,16 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+)
+
+const (
+	defaultPort      = "8080"
+	portVariableName = "PORT"
+	defaultCoreNum   = "1"
 )
 
 var (
@@ -17,43 +26,77 @@ var (
 func main() {
 
 	logger.Printf("CPU cores: %d", numOfCores)
-	runtime.GOMAXPROCS(numOfCores)
+	gin.SetMode(gin.ReleaseMode)
 
-	mux := http.NewServeMux()
+	// router
+	r := gin.New()
+	r.Use(gin.Recovery())
 
-	// Handlers
-	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
-		fmt.Fprint(w, "ok")
-	})
-	mux.HandleFunc("/run", runHandler)
+	r.GET("/", homeHandler)
+	r.GET("/cores/:cores", coreHandler)
+	r.GET("/cores", coreHandler)
 
-	// Server
+	// port
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
-	server := &http.Server{
-		Addr:    fmt.Sprintf(":%s", port),
-		Handler: mux,
-	}
+	addr := fmt.Sprintf(":%s", port)
 
-	logger.Printf("Server starting on port %s \n", port)
-	logger.Fatal(server.ListenAndServe())
+	logger.Printf("Server starting: %s \n", addr)
+	if err := r.Run(addr); err != nil {
+		logger.Fatal(err)
+	}
 
 }
 
-func runHandler(w http.ResponseWriter, r *http.Request) {
+func homeHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"numCPU": numOfCores,
+	})
+}
 
-	logger.Printf("CPU cores: %d", numOfCores)
-	fmt.Fprintf(w, "CPU cores: %d\n", numOfCores)
+func coreHandler(c *gin.Context) {
+	k := c.Param("cores")
+	if k == "" {
+		k = defaultCoreNum
+	}
 
-	start := time.Now()
+	cc, err := strconv.Atoi(k)
+	if err != nil {
+		logger.Printf("Error while parsing core parameter: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid Argument",
+			"status":  "BadRequest",
+		})
+		return
+	}
+
+	r := runCores(cc)
+	c.JSON(http.StatusOK, r)
+	return
+}
+
+const numOfLoops = 10
+
+func runCores(n int) *runResponse {
+
+	runtime.GOMAXPROCS(n)
+	logger.Printf("Setting max CPU: %d/%d", n, numOfCores)
+
+	r := &runResponse{
+		StartTime:   time.Now(),
+		Messages:    []runMsg{},
+		TottalCores: numOfCores,
+		UsedCores:   n,
+	}
+
 	done := make(chan int)
 	x := int64(0)
 
-	for i := 0; i < numOfCores; i++ {
+	for i := 0; i < numOfLoops; i++ {
 		logger.Printf("Core %d start", i)
-		fmt.Fprintf(w, "Core %d start\n", i)
+		r.add(i, fmt.Sprintf("Core %d start", i))
 		go func(worker int) {
 			doWork(&x)
 			done <- worker
@@ -65,24 +108,51 @@ W:
 	for {
 		select {
 		case k := <-done:
-			e := time.Since(start)
+			e := time.Since(r.StartTime)
 			logger.Printf("Core %d done in %s", k, e)
-			fmt.Fprintf(w, "Core %d done in %s\n", k, e)
+			r.add(k, fmt.Sprintf("Core %d done in %s", k, e))
 			doneWorkerCount++
-			if doneWorkerCount == numOfCores {
+			if doneWorkerCount == n {
 				break W
 			}
 		}
 	}
 
-	elapsed := time.Since(start)
-	logger.Printf("Total duration: %s", elapsed)
-	fmt.Fprintf(w, "Total duration: %s\n", elapsed)
+	r.EndTime = time.Now()
+	r.TotalDuration = time.Since(r.StartTime).String()
+	logger.Printf("Total duration: %s", r.TotalDuration)
+
+	return r
 
 }
 
+const workLoops = 100000000
+
 func doWork(p *int64) {
-	for i := int64(1); i <= 9000000000; i++ {
+	for i := int64(1); i <= workLoops; i++ {
 		*p = i
 	}
+}
+
+type runResponse struct {
+	TottalCores   int       `json:"tottalCores"`
+	UsedCores     int       `json:"usedCores"`
+	RunCores      int       `json:"runCores"`
+	NumOfLoops    int       `json:"numOfLoops"`
+	Messages      []runMsg  `json:"messages"`
+	StartTime     time.Time `json:"startTime"`
+	EndTime       time.Time `json:"endTime"`
+	TotalDuration string    `json:"totalDuration"`
+}
+
+func (r *runResponse) add(c int, m string) {
+	r.Messages = append(r.Messages, runMsg{
+		CoreIndex: c,
+		Message:   m,
+	})
+}
+
+type runMsg struct {
+	CoreIndex int    `json:"coreIndex"`
+	Message   string `json:"message"`
 }
