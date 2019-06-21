@@ -68,7 +68,8 @@ kubectl apply -f service.yaml
 ```
 
 
-## Cloud Run (managed)
+### Cloud Run (managed)
+
 
 ```shell
 gcloud beta run deploy gorun \
