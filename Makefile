@@ -32,7 +32,7 @@ deploy:
 
 .PHONY: apply
 apply:
-	kubectl apply -f service.yaml
+	kubectl apply -f service.yaml -n demo
 
 .PHONY: deployall
 deployall: service deploy apply
