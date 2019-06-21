@@ -18,25 +18,27 @@ Will run `1000000000` mathematical calculations in `4` separate `goroutines` wit
 
 ```json
 {
-    "total_cores": 4,
-    "max_cores": 4,
-    "duration": "962.592169ms",
-    "messages": [
+    "available_cores": 4,
+    "max_cores": 2,
+    "concurrency": 4,
+    "calculations": 1000000000,
+    "duration": "1.706786234s",
+    "details": [
+        {
+            "goroutine": 1,
+            "duration": "1.390726667s"
+        },
         {
             "goroutine": 2,
-            "message": "Done: 903.902341ms"
+            "duration": "1.673043201s"
         },
         {
             "goroutine": 4,
-            "message": "Done: 956.269309ms"
-        },
-        {
-            "goroutine": 1,
-            "message": "Done: 958.983235ms"
+            "duration": "1.673078606s"
         },
         {
             "goroutine": 3,
-            "message": "Done: 962.547894ms"
+            "duration": "1.673091242s"
         }
     ]
 }

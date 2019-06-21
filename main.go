@@ -102,9 +102,11 @@ func runWork(cores, counts int, calcs int64) *runResponse {
 	start := time.Now()
 
 	r := &runResponse{
-		TottalCores: numOfCores,
-		MaxCores:    int(cores),
-		Messages:    []runMsg{},
+		AvailableCores: numOfCores,
+		MaxCores:       cores,
+		Concurrency:    counts,
+		Calculations:   calcs,
+		Details:        []calcDetail{},
 	}
 
 	done := make(chan int)
@@ -124,7 +126,7 @@ W:
 		case k := <-done:
 			e := time.Since(start)
 			logger.Printf("Core %d done in %s", k, e)
-			r.add(k, fmt.Sprintf("Done: %s", e))
+			r.add(k, e.String())
 			doneWorkerCount++
 			if doneWorkerCount == int(counts) {
 				break W
@@ -148,20 +150,22 @@ func doWork(c int64) {
 }
 
 type runResponse struct {
-	TottalCores   int      `json:"total_cores"`
-	MaxCores      int      `json:"max_cores"`
-	TotalDuration string   `json:"duration"`
-	Messages      []runMsg `json:"messages"`
+	AvailableCores int          `json:"available_cores"`
+	MaxCores       int          `json:"max_cores"`
+	Concurrency    int          `json:"concurrency"`
+	Calculations   int64        `json:"calculations"`
+	TotalDuration  string       `json:"duration"`
+	Details        []calcDetail `json:"details"`
 }
 
 func (r *runResponse) add(c int, m string) {
-	r.Messages = append(r.Messages, runMsg{
-		Routine: c,
-		Message: m,
+	r.Details = append(r.Details, calcDetail{
+		Routine:  c,
+		Duration: m,
 	})
 }
 
-type runMsg struct {
-	Routine int    `json:"goroutine"`
-	Message string `json:"message"`
+type calcDetail struct {
+	Routine  int    `json:"goroutine"`
+	Duration string `json:"duration"`
 }
