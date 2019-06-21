@@ -1,28 +1,42 @@
 # gomaxprocstest
 
-Simple golang concurrency and parallelism test app. It spins CPU-intensive calculation in a goroutine, per each CPU.
+Simple golang concurrency test app. It spins up CPU-intensive calculation for defined number of `goroutines`. This app is helpful in assessing runtime performance in virtualized envirnments where often the number of host vCPUs are exposed to app runtime as `runtime.NumCPU()` but the actual number of CPUs available to the application is actually capped at lower number (pften 1 vCPU) which may lead to perception of low performance.
 
 REST endpoints:
 
-`/` - shows total number of CPUs "visible" to go runtime
-`/cores` - runs with max `GOMAXPROCS` set to total number of CPUs
-`/cores/2` - runs with max `GOMAXPROCS` set to passed value (e.g. `4`)
+* `/` - shows total number of CPUs "visible" to go runtime
+* `/cores/:core/concurrency/:count/calcs/:calc` - where
+  * `:core` represents the number of max cores to set for this request
+  * `:count` represents the number of concurrent goroutines to execute
+  * `:calc` represents the number of mathematical operations to perform (each op includes both `+` and `-`)
 
-The response will look something like this
+As an example, this request:
+
+`/cores/4/concurrency/4/calcs/1000000000`
+
+Will result in response looking something like this:
 
 ```json
 {
     "total_cores": 4,
-    "max_cores": 2,
-    "duration": "59.606265ms",
+    "max_cores": 4,
+    "duration": "962.592169ms",
     "messages": [
         {
-            "core": 2,
-            "message": "Done: 58.945942ms"
+            "goroutine": 2,
+            "message": "Done: 903.902341ms"
         },
         {
-            "core": 1,
-            "message": "Done: 59.462734ms"
+            "goroutine": 4,
+            "message": "Done: 956.269309ms"
+        },
+        {
+            "goroutine": 1,
+            "message": "Done: 958.983235ms"
+        },
+        {
+            "goroutine": 3,
+            "message": "Done: 962.547894ms"
         }
     ]
 }

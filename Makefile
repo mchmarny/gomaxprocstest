@@ -5,6 +5,10 @@ mod:
 	go mod tidy
 	go mod vendor
 
+.PHONY: run
+run:
+	go run -v main.go
+
 .PHONY: image
 image: mod
 	gcloud builds submit \
@@ -15,7 +19,8 @@ image: mod
 service:
 	gcloud beta run deploy gomaxprocs \
 		--image=gcr.io/cloudylabs-public/gomaxprocs:$(RELEASE) \
-		--region=us-central1
+		--region=us-central1 \
+		--platform=managed
 
 .PHONY: deploy
 deploy:
@@ -28,6 +33,10 @@ deploy:
 .PHONY: apply
 apply:
 	kubectl apply -f service.yaml
+
+.PHONY: deployall
+deployall: service deploy apply
+
 
 .PHONY: undeploy
 undeploy:

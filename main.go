@@ -33,8 +33,7 @@ func main() {
 	r.Use(gin.Recovery())
 
 	r.GET("/", homeHandler)
-	r.GET("/cores/:cores", coreHandler)
-	r.GET("/cores", coreHandler)
+	r.GET("/cores/:core/concurrency/:count/calcs/:calc", workHandler)
 
 	// port
 	port := os.Getenv("PORT")
@@ -56,51 +55,64 @@ func homeHandler(c *gin.Context) {
 	})
 }
 
-func coreHandler(c *gin.Context) {
-	k := c.Param("cores")
-	if k == "" {
-		k = defaultCoreNum
-	}
+func workHandler(c *gin.Context) {
 
-	cc, err := strconv.Atoi(k)
-	if err != nil {
-		logger.Printf("Error while parsing core parameter: %v", err)
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid Argument",
-			"status":  "BadRequest",
-		})
-		return
-	}
-
-	r := runCores(cc)
+	// URL params
+	cores := paramAsInt(c, "core")
+	counts := paramAsInt(c, "count")
+	calcs := paramAsInt64(c, "calc")
+	r := runWork(cores, counts, calcs)
 	c.IndentedJSON(http.StatusOK, r)
 	return
 }
 
-// e := json.NewEncoder(w)
-// e.SetEscapeHTML(true)
-// e.SetIndent("", "\t")
-// e.Encode(o)
+func paramAsStr(c *gin.Context, k string) string {
+	logger.Printf("Parsing '%s'", k)
+	a := c.Param(k)
+	if a == "" {
+		logger.Fatalf("Parameter not defined '%s'", k)
+	}
+	return a
+}
 
-func runCores(n int) *runResponse {
+func paramAsInt64(c *gin.Context, k string) int64 {
+	a := paramAsStr(c, k)
+	i, err := strconv.ParseInt(a, 10, 64)
+	if err != nil {
+		logger.Fatalf("Error while parsing %s parameter: %v", k, err)
+	}
+	return i
+}
 
-	runtime.GOMAXPROCS(n)
-	logger.Printf("Setting max CPU: %d/%d", n, numOfCores)
+func paramAsInt(c *gin.Context, k string) int {
+	a := paramAsStr(c, k)
+	i, err := strconv.Atoi(a)
+	if err != nil {
+		logger.Fatalf("Error while parsing %s parameter: %v", k, err)
+	}
+	return i
+}
+
+func runWork(cores, counts int, calcs int64) *runResponse {
+
+	logger.Printf("Running cores:%d counts:%d calcs:%d", cores, counts, calcs)
+
+	runtime.GOMAXPROCS(int(cores))
+	logger.Printf("Setting max CPU: %d/%d", cores, numOfCores)
 	start := time.Now()
 
 	r := &runResponse{
-		Messages:    []runMsg{},
 		TottalCores: numOfCores,
-		MaxCores:    n,
+		MaxCores:    int(cores),
+		Messages:    []runMsg{},
 	}
 
 	done := make(chan int)
-	x := int64(0)
 
-	for i := 1; i <= n; i++ {
+	for i := 1; i <= int(counts); i++ {
 		logger.Printf("Core %d start", i)
 		go func(worker int) {
-			doWork(&x)
+			doWork(calcs)
 			done <- worker
 		}(i)
 	}
@@ -114,7 +126,7 @@ W:
 			logger.Printf("Core %d done in %s", k, e)
 			r.add(k, fmt.Sprintf("Done: %s", e))
 			doneWorkerCount++
-			if doneWorkerCount == n {
+			if doneWorkerCount == int(counts) {
 				break W
 			}
 		}
@@ -127,11 +139,11 @@ W:
 
 }
 
-const workLoops = 100000000
-
-func doWork(p *int64) {
-	for i := int64(1); i <= workLoops; i++ {
-		*p = i
+func doWork(c int64) {
+	p := int64(0)
+	for i := int64(1); i <= c; i++ {
+		p = p + i
+		p = p - i
 	}
 }
 
@@ -144,12 +156,12 @@ type runResponse struct {
 
 func (r *runResponse) add(c int, m string) {
 	r.Messages = append(r.Messages, runMsg{
-		CoreIndex: c,
-		Message:   m,
+		Routine: c,
+		Message: m,
 	})
 }
 
 type runMsg struct {
-	CoreIndex int    `json:"core"`
-	Message   string `json:"message"`
+	Routine int    `json:"goroutine"`
+	Message string `json:"message"`
 }
