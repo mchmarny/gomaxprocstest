@@ -6,9 +6,7 @@ That means that if you set the number of threads in your code (e.g `GOMAXPROCS` 
 
 > Note, starting with Go 1.5+ and 1.6+, `GOMAXPROCS` is set to runtime.NumCPU() by default!
 
-This simple golang concurrency test app helps asses performance impact under different combinations of cores, goroutines, and number of CPU-intensive calculations.
-
-More on scheduling in Go [here](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part1.html)
+This simple golang concurrency test app helps asses performance impact under different combinations of cores, goroutines, and number of CPU-intensive calculations. More on scheduling in Go [here](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part1.html)
 
 ## Overview
 
@@ -29,8 +27,7 @@ You can also use the build in go `pprof` command to investigate CPU profile usin
 
 ## Usage
 
-For example, this request:
-`/cores/4/concurrency/10/calcs/1000000000`
+For example, this request: [/cores/**4**/concurrency/**10**/calcs/**1000000000**]()
 
 Will run `1000000000` mathematical calculations in `10` separate goroutines with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this:
 
