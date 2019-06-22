@@ -27,9 +27,7 @@ You can also use the build in go `pprof` command to investigate CPU profile usin
 
 ## Usage
 
-For example, this request: [/cores/**4**/concurrency/**10**/calcs/**1000000000**]()
-
-Will run `1000000000` mathematical calculations in `10` separate goroutines with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this (number of `details` shorten for readability):
+For example, this request `/cores/4/concurrency/10/calcs/1000000000` will run `1000000000` mathematical calculations in `10` separate goroutines with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this (number of `details` shorten for readability):
 
 ```json
 {
@@ -52,6 +50,8 @@ Will run `1000000000` mathematical calculations in `10` separate goroutines with
 ```
 
 ## Deploy
+
+Few quick examples how to run the pre-built image locally or on GCP:
 
 ### Local (using docker)
 
@@ -87,4 +87,4 @@ gcloud beta run deploy gorun \
 
 ## Disclaimer
 
-This is my personal project and it does not represent my employer. I take no responsibility for issues caused by this code. I do my best to ensure that everything works, but if something goes wrong, my apologies is all you will get.
+This is my personal project and it does not represent my employer. I take no responsibility for issues caused by this code. I do my best to ensure that everything works, but if something goes wrong, my apologies and an attempt to fix it is I can promise.
