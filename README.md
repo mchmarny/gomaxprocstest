@@ -46,37 +46,35 @@ Will run `1000000000` mathematical calculations in `4` separate `goroutines` wit
 
 ## Deploy
 
-### Local
+### Local (using docker)
 
 ```shell
-go run main.go
+docker run -p 8080:8080 mchmarny/gorun:0.1.5
 ```
 
 ### Cloud Run on GKE
 
 ```shell
 gcloud beta run deploy gorun \
-    --image gcr.io/cloudylabs-public/gorun:0.1.4 \
+    --image gcr.io/cloudylabs-public/gorun:0.1.5 \
     --platform gke \
     --cluster cr \
     --cluster-location us-east1
 ```
 
-
 ### Cloud Run on GKE (w/ 1 vCPU resource limit)
 
 ```shell
-kubectl apply -f service.yaml
+kubectl apply -f service.yaml -n demo
 ```
-
 
 ### Cloud Run (managed)
 
-
 ```shell
 gcloud beta run deploy gorun \
-	--image=gcr.io/cloudylabs-public/gorun:0.1.4 \
-	--region=us-central1
+	--image=gcr.io/cloudylabs-public/gorun:0.1.5 \
+	--region=us-central1 \
+    --platform=managed
 ```
 
 
