@@ -1,11 +1,19 @@
 # gorun
 
-Simple golang concurrency test app. It spins up CPU-intensive calculation for defined number of `goroutines`. This app is helpful in assessing runtime performance in virtualized environments where often the number of host vCPUs are exposed to app runtime as `runtime.NumCPU()` but the actual number of CPUs available to the application is capped at lower number (often 1 vCPU) which may lead to perception of low performance.
+In virtualized environments the number of virtual CPUs (vCPUs) exposed to the application runtime (e.g. `runtime.NumCPU()` in Go) is based on the total number of vCPUs available on the underlined host node. The actual number of vCPUs available to your application is actually capped at much lower number to prevent one application from consuming all of the compute resources of the host node.
 
-REST endpoints:
+That means that if you set the number of threads in your code (e.g `GOMAXPROCS` in Go) to anything above the capped number (e.g. `runtime.GOMAXPROCS(runtime.NumCPU())`), your app performance will be degraded with some correlation to the number of goroutines you run in your application. This happens because the Go scheduler will try to distribute each one of the goroutines over multiple worker threads on every available processor.
 
-* `/` - shows total number of CPUs "visible" to go runtime
-* `/cores/:core/concurrency/:count/calcs/:calc` - where
+> Note, starting with Go 1.5+ and 1.6+, `GOMAXPROCS` is set to runtime.NumCPU() by default!
+
+This simple golang concurrency test app helps asses performance impact under different combinations of cores, goroutines, and number of CPU-intensive calculations.
+
+Good, multi-part read on scheduling in Go is available [here](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part1.html)
+
+## REST endpoints
+
+* `GET /` - shows total number of CPUs "visible" to go runtime
+* `GET /cores/:core/concurrency/:count/calcs/:calc` - where
   * `:core` represents the number of max cores to set for this request
   * `:count` represents the number of concurrent goroutines to execute
   * `:calc` represents the number of mathematical operations to perform (each op includes both `+` and `-`)
