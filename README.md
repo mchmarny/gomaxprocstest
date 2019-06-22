@@ -20,7 +20,7 @@ The `gorun` app exposes following REST endpoints:
   * `:count` represents the number of concurrent goroutines to execute
   * `:calc` represents the number of mathematical operations to perform
 * `GET /perf` [pprof tools](https://golang.org/pkg/runtime/pprof/)
-* `GET /perf/goroutine?debug=2` for full goroutine stack dump
+* `GET /perf/goroutine?debug=2` for full goroutine stack dump which is helpful in identifying leaks (e.g. wait time to receive from a channel)
 
 > Note, deploying `gorun` will expose access to `pprof` tool. This is not advisable in normal applications (exposes file names, degrades performance, etc.). For `gorun` this is really the sole purpose. Still, consider it before deploying.
 
