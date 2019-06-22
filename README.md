@@ -65,7 +65,8 @@ gcloud beta run deploy gorun \
 ### Cloud Run on GKE (w/ 1 vCPU resource limit)
 
 ```shell
-kubectl apply -f service.yaml -n demo
+kubectl -n demo apply -f \
+    https://raw.githubusercontent.com/mchmarny/gorun/master/service.yaml
 ```
 
 ### Cloud Run (managed)
