@@ -22,7 +22,7 @@ As an example, this request:
 
 `/cores/4/concurrency/4/calcs/1000000000`
 
-Will run `1000000000` mathematical calculations in `4` separate `goroutines` with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this:
+Will run `1000000000` mathematical calculations in `4` separate goroutines with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this:
 
 ```json
 {
