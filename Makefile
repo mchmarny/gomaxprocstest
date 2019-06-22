@@ -38,3 +38,20 @@ apply:
 	kubectl apply -f service.yaml -n demo
 
 everything: build image service deploy apply
+
+comp:
+	# 1 core:
+	curl -s https://gorun.demo.knative.tech/cores/1/concurrency/10/calcs/1000000000 \
+		| jq -c ".duration"
+	curl -s http://gorun.default.knative.tech/cores/1/concurrency/10/calcs/1000000000 \
+		| jq -c ".duration"
+	curl -s http://gorun-2gtouos2pq-uc.a.run.app/cores/1/concurrency/10/calcs/1000000000 \
+		| jq -c ".duration"
+
+	# All available cores:
+	curl -s https://gorun.demo.knative.tech/cores/4/concurrency/10/calcs/1000000000 \
+		| jq -c ".duration"
+	curl -s http://gorun.default.knative.tech/cores/4/concurrency/10/calcs/1000000000 \
+		| jq -c ".duration"
+	curl -s http://gorun-2gtouos2pq-uc.a.run.app/cores/8/concurrency/10/calcs/1000000000 \
+		| jq -c ".duration"
