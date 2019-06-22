@@ -1,6 +1,6 @@
 # gorun
 
-Simple golang concurrency test app. It spins up CPU-intensive calculation for defined number of `goroutines`. This app is helpful in assessing runtime performance in virtualized environments where often the number of host vCPUs are exposed to app runtime as `runtime.NumCPU()` but the actual number of CPUs available to the application is actually capped at lower number (often 1 vCPU) which may lead to perception of low performance.
+Simple golang concurrency test app. It spins up CPU-intensive calculation for defined number of `goroutines`. This app is helpful in assessing runtime performance in virtualized environments where often the number of host vCPUs are exposed to app runtime as `runtime.NumCPU()` but the actual number of CPUs available to the application is capped at lower number (often 1 vCPU) which may lead to perception of low performance.
 
 REST endpoints:
 
