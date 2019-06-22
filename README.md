@@ -73,8 +73,8 @@ kubectl -n demo apply -f \
 
 ```shell
 gcloud beta run deploy gorun \
-	--image=gcr.io/cloudylabs-public/gorun:0.1.5 \
-	--region=us-central1 \
+    --image=gcr.io/cloudylabs-public/gorun:0.1.5 \
+    --region=us-central1 \
     --platform=managed
 ```
 
