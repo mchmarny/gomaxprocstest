@@ -29,7 +29,7 @@ You can also use the build in go `pprof` command to investigate CPU profile usin
 
 For example, this request: [/cores/**4**/concurrency/**10**/calcs/**1000000000**]()
 
-Will run `1000000000` mathematical calculations in `10` separate goroutines with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this:
+Will run `1000000000` mathematical calculations in `10` separate goroutines with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this (number of `details` shorten for readability):
 
 ```json
 {
@@ -46,8 +46,7 @@ Will run `1000000000` mathematical calculations in `10` separate goroutines with
         {
             "goroutine": 2,
             "duration": "1.673043201s"
-        },
-        ...
+        }
     ]
 }
 ```
