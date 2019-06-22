@@ -10,29 +10,35 @@ This simple golang concurrency test app helps asses performance impact under dif
 
 More on scheduling in Go [here](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part1.html)
 
-## REST endpoints
+## Overview
 
-* `GET /` - shows total number of CPUs "visible" to go runtime
-* `GET /cores/:core/concurrency/:count/calcs/:calc` - where
+The `gorun` app exposes following REST endpoints:
+
+* `GET /` shows total number of CPUs "visible" to go runtime
+* `GET /cores/:core/concurrency/:count/calcs/:calc` where:
   * `:core` represents the number of max cores to set for this request
   * `:count` represents the number of concurrent goroutines to execute
-  * `:calc` represents the number of mathematical operations to perform (each op includes both `+` and `-`)
-* `GET /perf` [pprof tool](https://golang.org/pkg/runtime/pprof/), for example:
-  * `go tool pprof http://localhost:8080/perf/profile`
+  * `:calc` represents the number of mathematical operations to perform
+* `GET /perf` [pprof tools](https://golang.org/pkg/runtime/pprof/)
+* `GET /perf/goroutine?debug=2` for full goroutine stack dump
 
 > Note, deploying `gorun` will expose access to `pprof` tool. This is not advisable in normal applications (exposes file names, degrades performance, etc.). For `gorun` this is really the sole purpose. Still, consider it before deploying.
 
-As an example, this request:
+You can also use the build in go `pprof` command to investigate CPU profile using
+`go tool pprof http://localhost:8080/profile`. Make sure you execute a few request before profiling.
 
-`/cores/4/concurrency/4/calcs/1000000000`
+## Usage
 
-Will run `1000000000` mathematical calculations in `4` separate goroutines with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this:
+For example, this request:
+`/cores/4/concurrency/10/calcs/1000000000`
+
+Will run `1000000000` mathematical calculations in `10` separate goroutines with `runtime.GOMAXPROCS` set to `4` and result in response looking something like this:
 
 ```json
 {
     "available_cores": 4,
     "max_cores": 2,
-    "concurrency": 4,
+    "concurrency": 10,
     "calculations": 1000000000,
     "duration": "1.706786234s",
     "details": [
@@ -44,14 +50,7 @@ Will run `1000000000` mathematical calculations in `4` separate goroutines with 
             "goroutine": 2,
             "duration": "1.673043201s"
         },
-        {
-            "goroutine": 4,
-            "duration": "1.673078606s"
-        },
-        {
-            "goroutine": 3,
-            "duration": "1.673091242s"
-        }
+        ...
     ]
 }
 ```
