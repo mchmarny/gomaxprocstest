@@ -8,7 +8,7 @@ That means that if you set the number of threads in your code (e.g `GOMAXPROCS` 
 
 This simple golang concurrency test app helps asses performance impact under different combinations of cores, goroutines, and number of CPU-intensive calculations.
 
-Good, multi-part read on scheduling in Go is available [here](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part1.html)
+More on scheduling in Go [here](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part1.html)
 
 ## REST endpoints
 
