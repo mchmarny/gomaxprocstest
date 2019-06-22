@@ -20,7 +20,7 @@ More on scheduling in Go [here](https://www.ardanlabs.com/blog/2018/08/schedulin
 * `GET /perf` [pprof tool](https://golang.org/pkg/runtime/pprof/), for example:
   * `go tool pprof http://localhost:8080/perf/profile`
 
-> Note, deploying `gorun` will expose access to `pprof` tool. This is not advisable in normal applications (exposes file names, degrades performance), but, this is really the sole purpose of this application. Still, consider it before deploying.
+> Note, deploying `gorun` will expose access to `pprof` tool. This is not advisable in normal applications (exposes file names, degrades performance, etc.). For `gorun` this is really the sole purpose. Still, consider it before deploying.
 
 As an example, this request:
 
