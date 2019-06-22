@@ -1,28 +1,32 @@
-RELEASE=0.1.4
+RELEASE=0.1.5
 
 .PHONY: mod
 mod:
 	go mod tidy
 	go mod vendor
 
-.PHONY: run
-run:
+debug:
 	go run -v main.go
 
-.PHONY: image
+run:
+	docker run -p 8080:8080 mchmarny/gorun:$(RELEASE)
+
+build: mod
+	docker build -t mchmarny/gorun:latest \
+		-t mchmarny/gorun:$(RELEASE) .
+	docker push mchmarny/gorun:$(RELEASE)
+
 image: mod
 	gcloud builds submit \
 		--project cloudylabs-public \
 		--tag gcr.io/cloudylabs-public/gorun:$(RELEASE)
 
-.PHONY: service
 service:
 	gcloud beta run deploy gorun \
 		--image=gcr.io/cloudylabs-public/gorun:$(RELEASE) \
 		--region=us-central1 \
 		--platform=managed
 
-.PHONY: deploy
 deploy:
 	gcloud beta run deploy gorun \
 		--image gcr.io/cloudylabs-public/gorun:$(RELEASE) \
@@ -30,10 +34,7 @@ deploy:
 		--cluster cr \
 		--cluster-location us-east1
 
-.PHONY: apply
 apply:
 	kubectl apply -f service.yaml -n demo
 
-.PHONY: deployall
-deployall: service deploy apply
-
+everything: build image service deploy apply

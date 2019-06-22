@@ -15,7 +15,6 @@ import (
 const (
 	defaultPort      = "8080"
 	portVariableName = "PORT"
-	defaultCoreNum   = "1"
 )
 
 var (
@@ -25,7 +24,6 @@ var (
 
 func main() {
 
-	logger.Printf("CPU cores: %d", numOfCores)
 	gin.SetMode(gin.ReleaseMode)
 
 	// router
@@ -50,8 +48,11 @@ func main() {
 }
 
 func homeHandler(c *gin.Context) {
+	u := fmt.Sprintf("/cores/%d/concurrency/%d/calcs/1000000000",
+		numOfCores, numOfCores)
 	c.IndentedJSON(http.StatusOK, map[string]interface{}{
 		"cpu_num": numOfCores,
+		"example": u,
 	})
 }
 

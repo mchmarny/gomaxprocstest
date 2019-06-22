@@ -1,0 +1,7 @@
+.git
+.DS_Store
+.gitignore
+README.md
+LICENSE
+service.yaml
+Makefile
