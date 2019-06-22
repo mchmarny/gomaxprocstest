@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"runtime"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/pprof"
 )
 
 const (
@@ -29,6 +31,7 @@ func main() {
 	// router
 	r := gin.New()
 	r.Use(gin.Recovery())
+	pprof.Register(r, "perf")
 
 	r.GET("/", homeHandler)
 	r.GET("/cores/:core/concurrency/:count/calcs/:calc", workHandler)
@@ -112,6 +115,7 @@ func runWork(cores, counts int, calcs int64) *runResponse {
 
 	done := make(chan int)
 
+	// run calculations
 	for i := 1; i <= int(counts); i++ {
 		logger.Printf("Core %d start", i)
 		go func(worker int) {

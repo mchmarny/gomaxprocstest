@@ -17,6 +17,8 @@ Good, multi-part read on scheduling in Go is available [here](https://www.ardanl
   * `:core` represents the number of max cores to set for this request
   * `:count` represents the number of concurrent goroutines to execute
   * `:calc` represents the number of mathematical operations to perform (each op includes both `+` and `-`)
+* `GET /perf` [pprof tool](https://golang.org/pkg/runtime/pprof/), for example:
+  * `go tool pprof http://localhost:8080/perf/profile`
 
 As an example, this request:
 

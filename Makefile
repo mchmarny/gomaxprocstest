@@ -1,4 +1,4 @@
-RELEASE=0.1.5
+RELEASE=0.1.6
 
 .PHONY: mod
 mod:
@@ -7,6 +7,9 @@ mod:
 
 debug:
 	go run -v main.go
+
+profile:
+	go tool pprof http://localhost:8080/perf/profile
 
 run:
 	docker run -p 8080:8080 mchmarny/gorun:$(RELEASE)
